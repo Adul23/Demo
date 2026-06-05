@@ -1,0 +1,44 @@
+### 1. Регистрация нового пользователя
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "username": "testuser23311111",
+  "email": "partyd80111111@gmail.com",
+  "password": "password123!"
+}
+
+###
+
+### 2. Верификация аккаунта (введи код из консоли/почты)
+POST http://localhost:8080/auth/verify
+Content-Type: application/json
+
+{
+  "email": "partyd80111111@gmail.com",
+  "verificationCode": "588716"
+}
+
+###
+
+### 3. Авторизация (Получение JWT токена)
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "partyd80111111@gmail.com",
+  "password": "password123!"
+}
+
+### 
+
+### 4. Создание поста (Пример запроса с токеном)
+# Скопируй токен из ответа предыдущего запроса и вставь после слова Bearer
+POST http://localhost:8080/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+{
+  "content": "Привет, это моя первая публикация в модульном монолите!",
+  "mediaUrl": "https://example.com/social-photo.jpg"
+}

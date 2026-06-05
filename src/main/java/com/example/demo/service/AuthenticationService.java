@@ -36,22 +36,40 @@ public class AuthenticationService {
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpireAt(LocalDateTime.now().plusMinutes(15));
-        sendVerificationEmail(user);
-        return userRepository.save(user);
+
+        // Сначала гарантированно сохраняем пользователя в базу PostgreSQL
+        User savedUser = userRepository.save(user);
+
+        // ВЫВОДИМ КОД В КОНСОЛЬ (Скопируешь его отсюда для верификации)
+        System.out.println("\n=======================================================");
+        System.out.println("!!! ВНИМАНИЕ! КОД ВЕРИФИКАЦИИ ДЛЯ ЮЗЕРА: " + savedUser.getVerificationCode());
+        System.out.println("=======================================================\n");
+
+        // Пытаемся отправить письмо. Если Google упадет — приложение пойдет дальше и вернет 200 OK!
+        try {
+            sendVerificationEmail(savedUser);
+        } catch (Exception e) {
+            System.out.println("[EMAIL-WARN] Письмо не улетело из-за SMTP, но регистрация завершена успешно.");
+        }
+
+        return savedUser;
     }
 
     public User authenticate(LoginDto input) {
-        User user = userRepository.findUserByEmail(input.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!user.isEnabled()) {
-            throw new RuntimeException("Account not verified. Verify");
-        }
+        // 1. ПЕРВЫМ ДЕЛОМ проверяем пароль и логин через Spring Security менеджер
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
                         input.getPassword()
                 )
         );
+
+        User user = userRepository.findUserByEmail(input.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Verify");
+        }
+
         return user;
     }
 
@@ -77,7 +95,7 @@ public class AuthenticationService {
     }
     public void sendVerificationEmail(User to){
         String subject = "Account verification";
-        String verificationCode = "Verification Code is " + generateVerificationCode();
+
         String htmlMessage =  "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
@@ -85,7 +103,7 @@ public class AuthenticationService {
                 + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
                 + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
                 + "<h3 style=\"color: #333;\">Verification Code:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + to.getVerificationCode() + "</p>"
                 + "</div>"
                 + "</div>"
                 + "</body>"
