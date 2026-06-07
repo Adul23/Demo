@@ -26,4 +26,9 @@ public class PostService {
         return postRepository.findByAuthorOrderByCreatedAtDesc(author, pageable);
     }
 
+    public Page<Post> getFeed(User user, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findFeedPosts(user, pageable);
+    }
+
 }

@@ -66,3 +66,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwia
 ### 8. Получить статистику подписок (замени {id} на реальный ID)
 GET http://localhost:8080/users/2/follow-stats
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 9. Получить ленту новостей
+GET http://localhost:8080/posts/feed?page=0&size=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig

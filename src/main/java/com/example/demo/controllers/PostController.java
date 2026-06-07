@@ -33,4 +33,13 @@ public class PostController {
         Post createdPost = postService.createPost(dto, user);
         return ResponseEntity.ok(createdPost);
     }
+    @GetMapping("/feed")
+    public ResponseEntity<Page<Post>> getFeed(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Post> posts = postService.getFeed(user, page, size);
+        return ResponseEntity.ok(posts);
+    }
 }
