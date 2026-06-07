@@ -28,12 +28,8 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Post> createPost(
             @AuthenticationPrincipal User user,
-            @RequestParam String content,
-            @RequestParam String mediaUrl
+            @RequestBody CreatePostDto dto
     ) {
-        CreatePostDto dto = new CreatePostDto();
-        dto.setContent(content);
-        dto.setMediaUrl(mediaUrl);
         Post createdPost = postService.createPost(dto, user);
         return ResponseEntity.ok(createdPost);
     }
