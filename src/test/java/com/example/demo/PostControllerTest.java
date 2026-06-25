@@ -2,9 +2,12 @@ package com.example.demo;
 
 import com.example.demo.controllers.PostController;
 import com.example.demo.dto.CreatePostDto;
+import com.example.demo.models.Comment;
 import com.example.demo.models.Post;
 import com.example.demo.models.User;
+import com.example.demo.service.CommentService;
 import com.example.demo.service.JwtService;
+import com.example.demo.service.LikeService;
 import com.example.demo.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +50,8 @@ class PostControllerTest {
     private JwtService jwtService;
 
     private User mockUser;
+    private LikeService likeService;
+    private CommentService commentService;
 
     @BeforeEach
     void setUp() {
@@ -108,4 +113,49 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(102))
                 .andExpect(jsonPath("$.content[0].content").value("Feed Post"));
     }
+
+    @Test
+    void likingPost_ShouldReturnMapOfOk() throws Exception {
+        Long postId = 100L;
+        // Mock the likeService call
+        doNothing().when(likeService).likePost(any(User.class), eq(postId));
+        mockMvc.perform(post("/posts/" + postId + "/like")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Successfully liked the post"));
+        // Verify the service was actually called
+        verify(likeService, times(1)).likePost(any(User.class), eq(postId));
+    }
+
+    @Test
+    void unlikingPost_ShouldReturnMapOfOk() throws Exception {
+        Long postId = 100L;
+        // Mock the likeService call
+        doNothing().when(likeService).unlikePost(any(User.class), eq(postId));
+        mockMvc.perform(post("/posts/" + postId + "/unlike")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Successfully unliked the post"));
+        // Verify the service was actually called
+        verify(likeService, times(1)).likePost(any(User.class), eq(postId));
+    }
+
+    @Test
+    void postingComment_ShouldReturnMapOfOk() throws Exception {
+        Long postId = 100L;
+        String content = "Damn";
+
+        Comment mockComment = new Comment(mockUser, new Post(), content);
+        when(commentService.addComment(any(User.class), eq(postId), eq(content))).thenReturn(mockComment);
+
+        mockMvc.perform(post("/posts/" + postId + "/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)) // Send the comment text as the request body
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Successfully commented the post"));
+
+        // Verify the service was actually called with the correct parameters
+        verify(commentService, times(1)).addComment(any(User.class), eq(postId), eq(content));
+    }
+
 }
