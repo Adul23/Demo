@@ -99,3 +99,21 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwia
 ### 13. Получить комментарии к посту (замени {id} на реальный ID поста)
 GET http://localhost:8080/posts/1/comments?page=0&size=10
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 14. Сохранить пост в закладки (замени {id} на реальный ID поста)
+POST http://localhost:8080/posts/1/save
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 15. Удалить пост из закладок (замени {id} на реальный ID поста)
+POST http://localhost:8080/posts/1/unsave
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 16. Получить список сохраненных постов
+GET http://localhost:8080/posts/saved?page=0&size=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig

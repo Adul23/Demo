@@ -25,7 +25,7 @@ public class CommentService {
     public Comment addComment(User user, Long postId, String content) {
         Post post = this.postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found for comment"));
-        
+
         Comment comment = new Comment(user, post, content);
         Comment savedComment = commentRepository.save(comment);
 
@@ -39,8 +39,27 @@ public class CommentService {
     public Page<Comment> getPostComments(Long postId, int page, int size) {
         Post post = this.postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found for comments"));
-        
+
         Pageable pageable = PageRequest.of(page, size);
         return commentRepository.findByPostOrderByCreatedAtAsc(post, pageable);
+    }
+
+    @Transactional
+    public void deleteCommentOnPost(Long commentId, User user) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Deletion of Comment of post has failed"));
+        Post post = comment.getPost();
+        boolean isCommentAuthor = comment.getAuthor().getId().equals(user.getId());
+        boolean isPostAuthor = post.getAuthor().getId().equals(user.getId());
+        if (!isPostAuthor && !isCommentAuthor){
+            throw new RuntimeException("You are not authorized to delete the comment");
+        }
+
+        commentRepository.delete(comment);
+        Integer commentsCount = post.getCommentsCount();
+        if (commentsCount > 0){
+            post.setCommentsCount(commentsCount - 1);
+        }
     }
 }

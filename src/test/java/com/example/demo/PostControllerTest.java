@@ -9,6 +9,7 @@ import com.example.demo.service.CommentService;
 import com.example.demo.service.JwtService;
 import com.example.demo.service.LikeService;
 import com.example.demo.service.PostService;
+import com.example.demo.service.SavedPostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,9 @@ class PostControllerTest {
 
     @MockitoBean
     private CommentService commentService;
+
+    @MockitoBean
+    private SavedPostService savedPostService;
 
     private User mockUser;
 
@@ -180,4 +184,46 @@ class PostControllerTest {
         verify(commentService, times(1)).getPostComments(eq(postId), eq(0), eq(10));
     }
 
+    @Test
+    void savePost_ShouldReturnSuccess() throws Exception {
+        Long postId = 100L;
+        doNothing().when(savedPostService).savePost(any(User.class), eq(postId));
+
+        mockMvc.perform(post("/posts/" + postId + "/save")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Successfully saved the post"));
+
+        verify(savedPostService, times(1)).savePost(any(User.class), eq(postId));
+    }
+
+    @Test
+    void unsavePost_ShouldReturnSuccess() throws Exception {
+        Long postId = 100L;
+        doNothing().when(savedPostService).unSavePost(any(User.class), eq(postId));
+
+        mockMvc.perform(post("/posts/" + postId + "/unsave")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Successfully unsaved the post"));
+
+        verify(savedPostService, times(1)).unSavePost(any(User.class), eq(postId));
+    }
+
+    @Test
+    void getSavedPosts_ShouldReturnPageOfPosts() throws Exception {
+        Post savedPost = new Post(mockUser, "Saved post content", null);
+        savedPost.setId(200L);
+
+        Page<Post> page = new PageImpl<>(List.of(savedPost), PageRequest.of(0, 10), 1);
+        when(savedPostService.getSavedPosts(any(User.class), eq(0), eq(10))).thenReturn(page);
+
+        mockMvc.perform(get("/posts/saved?page=0&size=10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(200))
+                .andExpect(jsonPath("$.content[0].content").value("Saved post content"));
+
+        verify(savedPostService, times(1)).getSavedPosts(any(User.class), eq(0), eq(10));
+    }
 }

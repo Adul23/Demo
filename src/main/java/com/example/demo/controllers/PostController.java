@@ -8,6 +8,7 @@ import com.example.demo.models.User;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.LikeService;
 import com.example.demo.service.PostService;
+import com.example.demo.service.SavedPostService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,11 +20,13 @@ public class PostController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentService commentService;
+    private final SavedPostService savedPostService;
 
-    public PostController(PostService postService, LikeService likeService, CommentService commentService) {
+    public PostController(PostService postService, LikeService likeService, CommentService commentService, SavedPostService savedPostService) {
         this.postService = postService;
         this.likeService = likeService;
         this.commentService = commentService;
+        this.savedPostService = savedPostService;
     }
 
     @GetMapping
@@ -110,4 +113,66 @@ public class PostController {
         return ResponseEntity.ok(pageComment);
     }
 
+    @DeleteMapping("{id}/delete")
+    public ResponseEntity<?> deletePost(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id
+    ) {
+        try {
+            postService.deletePost(id, user);
+            return ResponseEntity.ok(java.util.Map.of("message", "Successfully deleted the post"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(java.util.Map.of("error", "Error deleting the post " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("{postId}/comment/{commentId}/delete")
+    public ResponseEntity<?> deleteCommentOnPost(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ) {
+        try {
+            commentService.deleteCommentOnPost(commentId, user);
+            return ResponseEntity.ok(java.util.Map.of("message", "Successfully deleted the comment"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(java.util.Map.of("error", "Error deleting the comment " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("{id}/save")
+    public ResponseEntity<?> savePost(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id
+    ) {
+        try {
+            savedPostService.savePost(user, id);
+            return ResponseEntity.ok(java.util.Map.of("message", "Successfully saved the post"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(java.util.Map.of("error", "Error saving the post " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("{id}/unsave")
+    public ResponseEntity<?> unSavePost(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id
+    ) {
+        try {
+            savedPostService.unSavePost(user, id);
+            return ResponseEntity.ok(java.util.Map.of("message", "Successfully unsaved the post"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(java.util.Map.of("error", "Error UNsaving the post " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/saved")
+    public ResponseEntity<Page<Post>> getSavedPosts(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Post> posts = savedPostService.getSavedPosts(user, page, size);
+        return ResponseEntity.ok(posts);
+    }
 }
