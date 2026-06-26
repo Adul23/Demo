@@ -72,3 +72,30 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwia
 ### 9. Получить ленту новостей
 GET http://localhost:8080/posts/feed?page=0&size=10
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 10. Лайкнуть пост (замени {id} на реальный ID поста)
+POST http://localhost:8080/posts/1/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 11. Убрать лайк с поста (замени {id} на реальный ID поста)
+POST http://localhost:8080/posts/1/unlike
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 12. Добавить комментарий к посту (замени {id} на реальный ID поста)
+POST http://localhost:8080/posts/1/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+"Это отличный пост!"
+
+###
+
+### 13. Получить комментарии к посту (замени {id} на реальный ID поста)
+GET http://localhost:8080/posts/1/comments?page=0&size=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig

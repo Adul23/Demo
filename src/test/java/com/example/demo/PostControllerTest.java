@@ -49,9 +49,13 @@ class PostControllerTest {
     @MockitoBean
     private JwtService jwtService;
 
-    private User mockUser;
+    @MockitoBean
     private LikeService likeService;
+
+    @MockitoBean
     private CommentService commentService;
+
+    private User mockUser;
 
     @BeforeEach
     void setUp() {
@@ -137,7 +141,7 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Successfully unliked the post"));
         // Verify the service was actually called
-        verify(likeService, times(1)).likePost(any(User.class), eq(postId));
+        verify(likeService, times(1)).unlikePost(any(User.class), eq(postId));
     }
 
     @Test
@@ -156,6 +160,24 @@ class PostControllerTest {
 
         // Verify the service was actually called with the correct parameters
         verify(commentService, times(1)).addComment(any(User.class), eq(postId), eq(content));
+    }
+
+    @Test
+    void getPostComments_ShouldReturnPageOfComments() throws Exception {
+        Long postId = 100L;
+        Comment comment = new Comment(mockUser, new Post(), "Great post!");
+        comment.setId(500L);
+
+        Page<Comment> page = new PageImpl<>(List.of(comment), PageRequest.of(0, 10), 1);
+        when(commentService.getPostComments(eq(postId), eq(0), eq(10))).thenReturn(page);
+
+        mockMvc.perform(get("/posts/" + postId + "/comments?page=0&size=10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(500))
+                .andExpect(jsonPath("$.content[0].content").value("Great post!"));
+
+        verify(commentService, times(1)).getPostComments(eq(postId), eq(0), eq(10));
     }
 
 }
