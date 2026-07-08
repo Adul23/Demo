@@ -52,4 +52,9 @@ public class SavedPostService {
         Page<SavedPost> savedPage = savedPostRepository.findByUserOrderBySavedAtDesc(user, pageable);
         return savedPage.map(SavedPost::getPost);
     }
+    public Page<Post> searchSavedPosts(User user, String query, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SavedPost> savedPosts = savedPostRepository.searchSavedPosts(user, query, pageable);
+        return savedPosts.map(SavedPost::getPost);
+    }
 }

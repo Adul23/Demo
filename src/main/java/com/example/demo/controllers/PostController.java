@@ -175,4 +175,16 @@ public class PostController {
         Page<Post> posts = savedPostService.getSavedPosts(user, page, size);
         return ResponseEntity.ok(posts);
     }
+
+    @GetMapping("/saved/search")
+    public ResponseEntity<Page<Post>> searchSavedPosts(
+            @AuthenticationPrincipal User user,
+            @RequestBody String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Post> posts = savedPostService.searchSavedPosts(user, query, page, size);
+        return ResponseEntity.ok(posts);
+    }
+
 }
