@@ -6,6 +6,7 @@ import com.example.demo.repository.ChatMessageRepository;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ChatMessageRepositoryTest {
 
     @Autowired
@@ -38,7 +40,9 @@ public class ChatMessageRepositoryTest {
         user2 = userRepository.save(user2);
 
         ChatMessage msg1 = new ChatMessage(user1, user2, "Hello User 2!");
+        msg1.setLocalDateTime(java.time.LocalDateTime.now().minusMinutes(5));
         ChatMessage msg2 = new ChatMessage(user2, user1, "Hi User 1!");
+        msg2.setLocalDateTime(java.time.LocalDateTime.now());
 
         chatMessageRepository.save(msg1);
         chatMessageRepository.save(msg2);

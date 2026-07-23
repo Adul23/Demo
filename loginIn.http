@@ -30,8 +30,36 @@ Content-Type: application/json
   "password": "password123!"
 }
 
-### 
+###
+### 2. Верификация аккаунта (введи код из консоли/почты)
+POST http://localhost:8080/auth/verify
+Content-Type: application/json
 
+{
+  "email": "email1@gmail.com",
+  "verificationCode": "528962"
+}
+
+###
+### 10. Регистрация нового пользователя
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "username": "nothing1",
+  "email": "email1@gmail.com",
+  "password": "password123!"
+}
+
+### 3. Авторизация (Получение JWT токена)
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "email1@gmail.com",
+  "password": "password123!"
+}
+###
 ### 4. Создание поста (Пример запроса с токеном)
 # Скопируй токен из ответа предыдущего запроса и вставь после слова Bearer
 POST http://localhost:8080/posts
@@ -116,4 +144,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwia
 
 ### 16. Получить список сохраненных постов
 GET http://localhost:8080/posts/saved?page=0&size=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 17. Получить историю сообщений с пользователем
+GET http://localhost:8080/messages/2?page=0&size=20
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig
+
+###
+
+### 18. Получить список всех пользователей системы для чата
+GET http://localhost:8080/users
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjIzMzExMTExIiwiaWF0IjoxNzgwNjY5NTgzLCJleHAiOjE3ODA2NzMxODN9.cVdk_dKTngpglHydSkNbjsnSZ5uICHhqiO6GIKERjig

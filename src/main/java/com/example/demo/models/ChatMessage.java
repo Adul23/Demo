@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "chat_messages",
         indexes = {
-                @Index(name = "idx_chat_history", columnList = "sender_id, recipient_id, timestamp DESC")
+                @Index(name = "idx_chat_history", columnList = "sender_id, recipient_id, local_date_time DESC")
         }
 )
 @Getter
